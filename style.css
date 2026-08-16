@@ -1,152 +1,268 @@
-/* Shared styling for the two public pages App Store Connect requires.
-   Self-contained: no webfonts, no CDN, nothing to break years from now. */
+/* Prism Pop — public pages.
+   Self-contained: no webfonts, no CDN, no JavaScript. The page commits to the
+   game's night palette rather than tracking the system theme, so it reads as an
+   extension of the app on any device. Every colour is painted explicitly. */
 
 :root {
-  --ground: #faf8fd;
-  --surface: #ffffff;
-  --edge: #e4dff0;
-  --ink: #1b1533;
-  --ink-dim: #55506b;
-  --ink-faint: #837d99;
-  --accent: #7a4bd0;
-  --accent-soft: #f1ebfb;
-  --display: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
-  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
+  --night: #0B0819;
+  --night-2: #100B24;
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-firm: rgba(255, 255, 255, 0.07);
+  --edge: rgba(255, 255, 255, 0.10);
+  --edge-lit: rgba(255, 255, 255, 0.20);
+  --ink: #F5F2FC;
+  --ink-dim: #ADA5C9;
+  --ink-faint: #7B7498;
+  --amber: #FFC74D;
+  --violet: #7A4FD6;
+  --teal: #2C7FA6;
+  --rose: #FF6B7A;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground: #100c22;
-    --surface: #1a1436;
-    --edge: #2e2752;
-    --ink: #f2effa;
-    --ink-dim: #b3abd0;
-    --ink-faint: #837b9f;
-    --accent: #ffc74d;
-    --accent-soft: #241d44;
-  }
+  --display: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN",
+             "Segoe UI", system-ui, sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
-  padding: 0 22px 96px;
-  background: var(--ground);
+  background: var(--night);
   color: var(--ink);
   font-family: var(--body);
   font-size: 17px;
-  line-height: 1.65;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
-.wrap { max-width: 46rem; margin: 0 auto; }
-
-header {
-  padding: 64px 0 8px;
-  border-bottom: 1px solid var(--edge);
-  margin-bottom: 40px;
+/* --- The aurora. Three slow blooms behind everything, the same trick the
+       game's background uses. Decoration only: no content depends on it. --- */
+.aurora {
+  position: fixed;
+  inset: -20vh -20vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38vw 38vw at 18% 12%, rgba(122, 79, 214, 0.34), transparent 62%),
+    radial-gradient(42vw 42vw at 88% 30%, rgba(44, 127, 166, 0.28), transparent 64%),
+    radial-gradient(34vw 34vw at 60% 84%, rgba(255, 199, 77, 0.10), transparent 66%);
+  animation: drift 48s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2.5%, -2%, 0) scale(1.08); }
+  100% { transform: translate3d(-2%, 2.5%, 0) scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none; }
+  html { scroll-behavior: auto; }
 }
 
-.game {
+.wrap { max-width: 44rem; margin: 0 auto; padding: 0 24px 96px; }
+
+/* --- Masthead --- */
+.masthead { padding: 84px 0 40px; }
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--display);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--accent);
-  margin: 0 0 6px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-decoration: none;
+  margin-bottom: 22px;
 }
+.wordmark svg { display: block; }
 
 h1 {
   font-family: var(--display);
-  font-size: clamp(30px, 6vw, 42px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin: 0 0 12px;
+  font-size: clamp(38px, 8vw, 62px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin: 0 0 16px;
+  text-wrap: balance;
+  background: linear-gradient(168deg, #FFFFFF 0%, #C9BFEA 62%, #8E82BE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.standfirst {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 19.5px;
+  line-height: 1.5;
+  color: var(--ink-dim);
   text-wrap: balance;
 }
 
-.updated {
-  font-size: 14.5px;
+.stamp {
+  margin: 22px 0 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
   color: var(--ink-faint);
-  margin: 0 0 28px;
 }
+.stamp code { color: var(--amber); }
+
+/* The six gem silhouettes: the game's whole thesis in one row. */
+.gems {
+  display: flex;
+  gap: 14px;
+  margin: 34px 0 0;
+  flex-wrap: wrap;
+}
+.gems svg { display: block; }
+
+/* --- Body --- */
+main { padding-top: 8px; }
 
 h2 {
   font-family: var(--display);
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 700;
-  letter-spacing: -0.015em;
-  margin: 44px 0 12px;
+  letter-spacing: -0.02em;
+  margin: 56px 0 8px;
   text-wrap: balance;
+  scroll-margin-top: 24px;
+}
+h2::after {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 2px;
+  margin-top: 12px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--amber), rgba(255, 199, 77, 0));
 }
 
 h3 {
   font-family: var(--display);
-  font-size: 18px;
+  font-size: 18.5px;
   font-weight: 600;
-  margin: 30px 0 6px;
-}
-
-p { margin: 0 0 16px; }
-
-ul { margin: 0 0 16px; padding-left: 22px; }
-li { margin-bottom: 8px; }
-
-a {
-  color: var(--accent);
-  text-underline-offset: 3px;
-}
-a:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 3px;
-}
-
-.lede {
-  font-size: 19px;
-  color: var(--ink-dim);
-}
-
-.callout {
-  background: var(--accent-soft);
-  border: 1px solid var(--edge);
-  border-radius: 14px;
-  padding: 20px 22px;
-  margin: 0 0 28px;
-}
-.callout p:last-child { margin-bottom: 0; }
-.callout strong { color: var(--ink); }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 20px;
-  font-size: 16px;
-}
-th, td {
-  text-align: left;
-  padding: 11px 12px;
-  border-bottom: 1px solid var(--edge);
-  vertical-align: top;
-}
-th {
-  font-family: var(--display);
-  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 34px 0 6px;
   color: var(--ink);
 }
-td { color: var(--ink-dim); }
 
-.scroller { overflow-x: auto; }
+p { margin: 0 0 16px; max-width: 66ch; }
 
-footer {
-  margin-top: 64px;
-  padding-top: 24px;
-  border-top: 1px solid var(--edge);
-  font-size: 15px;
+ul { margin: 0 0 16px; padding-left: 20px; max-width: 66ch; }
+li { margin-bottom: 9px; color: var(--ink-dim); }
+li::marker { color: var(--amber); }
+
+strong { color: var(--ink); font-weight: 600; }
+em { color: var(--ink); font-style: italic; }
+
+a {
+  color: var(--amber);
+  text-decoration-color: rgba(255, 199, 77, 0.4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 160ms ease;
+}
+a:hover { text-decoration-color: var(--amber); }
+a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--surface-firm);
+  border: 1px solid var(--edge);
+  color: var(--amber);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+/* --- Callout --- */
+.callout {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 24px 26px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--edge);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.30);
+}
+.callout p { margin: 0 0 12px; max-width: none; }
+.callout p:last-child { margin: 0; }
+.callout .lead {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* --- Table --- */
+.scroller {
+  overflow-x: auto;
+  margin: 0 0 20px;
+  border: 1px solid var(--edge);
+  border-radius: 16px;
+  background: var(--surface);
+}
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; min-width: 420px; }
+th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
   color: var(--ink-faint);
+  font-weight: 600;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--edge-lit);
+  white-space: nowrap;
+}
+td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--edge);
+  vertical-align: top;
+  color: var(--ink-dim);
+}
+tr:last-child td { border-bottom: 0; }
+td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+/* --- Questions (support page) --- */
+.qa { margin: 0; padding: 0; }
+.qa > div {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--edge);
+}
+.qa > div:last-child { border-bottom: 0; }
+.qa h3 { margin: 0 0 8px; }
+.qa p:last-child, .qa ul:last-child { margin-bottom: 0; }
+
+/* --- Footer --- */
+footer {
+  margin-top: 72px;
+  padding-top: 26px;
+  border-top: 1px solid var(--edge);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
+  gap: 10px 24px;
+  align-items: center;
+  font-size: 14.5px;
+  color: var(--ink-faint);
+}
+footer nav { display: flex; gap: 20px; margin-left: auto; }
+
+@media (max-width: 560px) {
+  .masthead { padding-top: 56px; }
+  .wrap { padding-bottom: 72px; }
+  footer nav { margin-left: 0; width: 100%; }
 }
